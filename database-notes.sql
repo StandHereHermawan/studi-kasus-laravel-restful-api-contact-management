@@ -1,0 +1,9 @@
+create database studi_kasus_laravel_restful_api_contact_management;
+
+create database studi_kasus_laravel_restful_api_contact_management_test;
+
+show databases;
+
+use studi_kasus_laravel_restful_api_contact_management;
+
+use studi_kasus_laravel_restful_api_contact_management_test;
