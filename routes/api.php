@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware(middleware: 'auth:sanctum')->get(uri: '/user', action: function (Request $request): mixed {
+//     return $request->user();
+// });
+
+# Hanya '/users' karena di RouteServiceProvider sudah diberi prefix 'api', membuat uri menjadi '/api/users' di unit test.
+Route::post('/users', [App\Http\Controllers\Model\UserController::class, 'register']);

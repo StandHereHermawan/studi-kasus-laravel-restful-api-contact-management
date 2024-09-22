@@ -19,6 +19,12 @@ class User extends Model
     public $incrementing    = true;
     public $timestamps      = true;
 
+    protected $fillable = [
+        'username',
+        'password',
+        'name'
+    ];
+
     protected static function booted(): void
     {
         parent::booted();
