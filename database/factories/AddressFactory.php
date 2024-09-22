@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contact>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Address>
  */
-class ContactFactory extends Factory
+class AddressFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,11 +18,12 @@ class ContactFactory extends Factory
     public function definition(): array
     {
         return [
-            "first_name" => null,
-            "last_name" => null,
-            "email" => null,
-            "phone" => null,
-            "user_id" => null,
+            "street" => null,
+            "city" => null,
+            "province" => null,
+            "country" => null,
+            "postal_code" => null,
+            "contact_id" => null,
             "is_active" => null,
             "deleted_at" => null,
             "created_at" => null,
@@ -30,60 +31,65 @@ class ContactFactory extends Factory
         ];
     }
 
-    public function firstName(int $number, $value = "SAMPLE-FIRST-NAME-",): Factory
+    public function street(int $number, $value = "SAMPLE-STREET-",): Factory
     {
         return $this->state(function (array $attributes) use ($value, $number): array {
             return [
-                "first_name" =>  "{$value}{$number}",
+                "street" =>  "{$value}{$number}",
             ];
         });
     }
 
-    public function lastName(int $number, $value = "SAMPLE-LAST-NAME-",): Factory
+    public function city(int $number, $value = "SAMPLE-CITY-",): Factory
     {
         return $this->state(function (array $attributes) use ($value, $number): array {
             return [
-                "last_name" =>  "{$value}{$number}",
+                "city" =>  "{$value}{$number}",
             ];
         });
     }
 
-    public function email(int $number = 0, $value = "sampleemail", $domain = "sampledomain", $dot = "com"): Factory
+    public function province(int $number, $value = "SAMPLE-PROVINCE-",): Factory
     {
-        return $this->state(function (array $attributes) use ($domain, $value, $dot, $number): array {
+        return $this->state(function (array $attributes) use ($value, $number): array {
             return [
-                "email" =>  "{$value}{$number}@{$domain}.{$dot}",
+                "province" =>  "{$value}{$number}",
             ];
         });
     }
 
-    public function phoneIndonesia(int $first3Number = null, int $middle4Number = null, int $last5Number = null): Factory
+    public function country(int $number, $value = "SAMPLE-COUNTRY-",): Factory
     {
-        return $this->state(function (array $attributes) use ($first3Number, $middle4Number, $last5Number): array {
-            
-            if ($first3Number == null) {
-                $first3Number = random_int(10, 59);
-            }
-
-            if ($middle4Number == null) {
-                $middle4Number = random_int(1000, 9999);
-            }
-
-            if ($last5Number == null) {
-                $last5Number = random_int(1000, 99999);
-            }
-
+        return $this->state(function (array $attributes) use ($value, $number): array {
             return [
-                "phone" =>  "+62-8{$first3Number}-{$middle4Number}-{$last5Number}",
+                "country" =>  "{$value}{$number}",
             ];
         });
     }
 
-    public function userId(int $number = 0): Factory
+    public function postalCode(int $number = null, $value = null,): Factory
+    {
+        return $this->state(function (array $attributes) use ($value, $number): array {
+
+            if ($value == null) {
+                $value = random_int(100, 999);
+            }
+
+            if ($number == null) {
+                $number = random_int(0, 9);
+            }
+
+            return [
+                "postal_code" =>  "4{$number}{$value}",
+            ];
+        });
+    }
+
+    public function contactId(int $number = 0): Factory
     {
         return $this->state(function (array $attributes) use ($number): array {
             return [
-                "user_id" =>  $number,
+                "contact_id" =>  $number,
             ];
         });
     }

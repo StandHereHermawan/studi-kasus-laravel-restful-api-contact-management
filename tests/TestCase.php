@@ -16,6 +16,8 @@ abstract class TestCase extends BaseTestCase
         // gak bisa, kena error foreign key
 
         parent::setUp();
+        DB::statement("DELETE FROM addresses");
+        DB::statement("ALTER TABLE addresses AUTO_INCREMENT = 1;");
         DB::statement("DELETE FROM contacts");
         DB::statement("ALTER TABLE contacts AUTO_INCREMENT = 1;");
         DB::statement("DELETE FROM users");

@@ -7,14 +7,13 @@ use App\Models\Scopes\IsNotYetDeletedScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Contact extends Model
+class Address extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table        = 'contacts';
+    protected $table        = 'addresses';
     protected $primaryKey   = 'id';
     protected $keyType      = 'int';
     public $incrementing    = true;
@@ -29,13 +28,8 @@ class Contact extends Model
         ]);
     }
 
-    public function user(): BelongsTo
+    public function contact(): BelongsTo
     {
-        return $this->belongsTo(Contact::class, 'user_id', 'id');
-    }
-
-    public function addresses(): HasMany
-    {
-        return $this->hasMany(Address::class, 'contact_id', 'id');
+        return $this->belongsTo(Contact::class, 'contact_id', 'id');
     }
 }
