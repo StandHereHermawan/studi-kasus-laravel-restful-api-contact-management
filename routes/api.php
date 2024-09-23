@@ -20,3 +20,5 @@ use Illuminate\Support\Facades\Route;
 
 # Hanya '/users' karena di RouteServiceProvider sudah diberi prefix 'api', membuat uri menjadi '/api/users' di unit test.
 Route::post('/users', [App\Http\Controllers\Model\UserController::class, 'register']);
+
+Route::post('/users/login', [App\Http\Controllers\Model\UserController::class, 'login']);

@@ -13,9 +13,20 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 15; $i++) {
             $index = $i + 1;
-            User::factory()->name($index)->username($index)->password()->isActive()->newRecord()->activeToken()->create()->save();
+
+            if ($i < 1) {
+                User::factory()->name($index)->username($index)->password()->isActive()->newRecord()->create()->save();
+            } else if ($i < 7) {
+                User::factory()->name($index)->username($index)->password()->isActive()->newRecord()->activeToken()->create()->save();
+            } else if ($i < 11) {
+                User::factory()->name($index)->username($index)->password()->isNotActive()->newRecord()->create()->save();
+            } else if ($i < 13) {
+                User::factory()->name($index)->username($index)->password()->isActive()->newRecord()->activeToken()->softDeleted()->create()->save();
+            } else {
+                User::factory()->name($index)->username($index)->password()->isNotActive()->newRecord()->activeToken()->softDeleted()->create()->save();
+            }
         }
     }
 }

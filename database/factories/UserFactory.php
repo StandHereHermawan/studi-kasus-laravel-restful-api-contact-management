@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
 use Ramsey\Uuid\Rfc4122\UuidV7;
 
 /**
@@ -19,14 +20,14 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            "username" =>   null,
-            "password" =>   null,
-            "name" =>       null,
-            "token" =>      null,
-            "is_active" =>  null,
-            "deleted_at" => null,
-            "created_at" => null,
-            "updated_at" => null,
+            "username"      => null,
+            "password"      => null,
+            "name"          => null,
+            "token"         => null,
+            "is_active"     => null,
+            "deleted_at"    => null,
+            "created_at"    => null,
+            "updated_at"    => null,
         ];
     }
     public function name(int $number, $value = "SAMPLE-NAME-",): Factory
@@ -47,11 +48,12 @@ class UserFactory extends Factory
         });
     }
 
-    public function password($password = "rahasia"): Factory
+    public function password($password = "Rahasia@12"): Factory
     {
         return $this->state(function (array $attributes) use ($password): array {
             return [
-                "password" => bcrypt($password),
+                // "password" => bcrypt($password),
+                "password" => Hash::make($password),
             ];
         });
     }
@@ -61,6 +63,15 @@ class UserFactory extends Factory
         return $this->state(function (array $attributes): array {
             return [
                 "is_active" => true,
+            ];
+        });
+    }
+
+    public function isNotActive(): Factory
+    {
+        return $this->state(function (array $attributes): array {
+            return [
+                "is_active" => false,
             ];
         });
     }

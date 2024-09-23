@@ -114,4 +114,54 @@ class UserTest extends TestCase
         Log::info(json_encode($response));
         Log::info(json_encode($response->json()));
     }
+
+    public function testLoginSuccess(): void
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->post('/api/users/login', [
+            "username" => 'SAMPLE-USERNAME-1',
+            "password" => 'Rahasia@12',
+        ])->assertStatus(200)->assertJson([
+            "data" => [
+                "username" => 'SAMPLE-USERNAME-1',
+                "name" => "SAMPLE-NAME-1",
+            ],
+        ]);
+
+        $user = User::where('username', 'SAMPLE-USERNAME-1')->first();
+        self::assertNotNull($user->token,);
+
+        Log::info(json_encode($user));
+    }
+
+    public function testLoginUsernameNotFound(): void
+    {
+        $this->post('/api/users/login', [
+            "username" => 'SAMPLE-USERNAME-1',
+            "password" => 'Rahasia@12',
+        ])->assertStatus(401)->assertJson([
+            "errors" => [
+                "message" => [
+                    "Username or password wrong."
+                ],
+            ],
+        ]);
+    }
+
+    public function testLoginPasswordWrong(): void
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->post('/api/users/login', [
+            "username" => 'SAMPLE-USERNAME-1',
+            "password" => 'Rahasia@123',
+        ])->assertStatus(401)->assertJson([
+            "errors" => [
+                "message" => [
+                    "Username or password wrong."
+                ],
+            ],
+        ]);
+    }
 }
