@@ -9,7 +9,9 @@ use App\Http\Resources\Model\UserResource;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Ramsey\Uuid\Rfc4122\UuidV7;
 
@@ -57,6 +59,12 @@ class UserController extends Controller
         $user->token = (string) UuidV7::uuid7(Carbon::now());
         $user->save();
 
+        return new UserResource($user);
+    }
+
+    public function get(Request $request): UserResource 
+    {
+        $user = Auth::user();
         return new UserResource($user);
     }
 }

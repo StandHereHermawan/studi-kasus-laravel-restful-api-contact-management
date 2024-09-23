@@ -22,3 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/users', [App\Http\Controllers\Model\UserController::class, 'register']);
 
 Route::post('/users/login', [App\Http\Controllers\Model\UserController::class, 'login']);
+
+Route::middleware(App\Http\Middleware\ApiAuthMiddleware::class)->group(function () {
+    Route::get('/users/current', [\App\Http\Controllers\Model\UserController::class, 'get']);
+});

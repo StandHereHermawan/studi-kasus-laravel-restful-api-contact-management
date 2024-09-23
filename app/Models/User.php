@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Models\Scopes\IsActiveScope;
 use App\Models\Scopes\IsNotYetDeletedScope;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Model
+class User extends Model implements Authenticatable
 {
     use HasFactory, SoftDeletes;
 
@@ -37,5 +38,36 @@ class User extends Model
     public function contacts(): HasMany
     {
         return $this->hasMany(Contact::class, 'user_id', 'id');
+    }
+
+    public function getAuthIdentifierName()
+    {
+        return 'username';
+    }
+
+    public function getAuthIdentifier()
+    {
+        return $this->username;
+    }
+
+    public function getAuthPassword()
+    {
+        return $this->password;
+    }
+
+    public function getRememberToken()
+    {
+        return $this->token;
+    }
+
+    public function setRememberToken($value): void
+    {
+        $this->token = $value;
+    }
+
+
+    public function getRememberTokenName()
+    {
+        return 'token';
     }
 }

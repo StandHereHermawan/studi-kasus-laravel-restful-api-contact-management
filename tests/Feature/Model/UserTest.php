@@ -164,4 +164,59 @@ class UserTest extends TestCase
             ],
         ]);
     }
+
+    public function testGetCurrentUserSuccess(): void
+    {
+        self::seed([UserSeeder::class,]);
+
+        $user = User::where('id', '=', 2)->first();
+        self::assertNotNull($user,);
+
+        $this->get('/api/users/current', [
+            "Authorization" => $user->token,
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => [
+                    "username" => $user->username,
+                    "name" => $user->name,
+                ],
+            ]);
+    }
+
+    public function testGetCurrentUserUnauthorized(): void
+    {
+        self::seed([UserSeeder::class,]);
+
+        $user = User::where('id', '=', 2)->first();
+        self::assertNotNull($user,);
+
+        $this->get('/api/users/current')->assertStatus(401)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "Unauthorized."
+                    ],
+                ],
+            ]);
+    }
+
+    public function testGetCurrentUserInvalidToken(): void
+    {
+        self::seed([UserSeeder::class,]);
+
+        $user = User::where('id', '=', 2)->first();
+        self::assertNotNull($user,);
+        $user->token = 'salah';
+
+        $this->get('/api/users/current', [
+            "Authorization" => $user->token,
+        ])->assertStatus(401)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "Unauthorized."
+                    ],
+                ],
+            ]);
+    }
 }
