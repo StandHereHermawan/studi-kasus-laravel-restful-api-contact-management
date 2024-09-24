@@ -25,4 +25,5 @@ Route::post('/users/login', [App\Http\Controllers\Model\UserController::class, '
 
 Route::middleware(App\Http\Middleware\ApiAuthMiddleware::class)->group(function () {
     Route::get('/users/current', [\App\Http\Controllers\Model\UserController::class, 'get']);
+    Route::patch('/users/current', [\App\Http\Controllers\Model\UserController::class, 'update']);
 });

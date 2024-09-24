@@ -3,16 +3,19 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Resources\Model\UserResource;
 use App\Models\User;
+
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+
 use Ramsey\Uuid\Rfc4122\UuidV7;
 
 class UserController extends Controller
@@ -62,9 +65,28 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function get(Request $request): UserResource 
+    public function get(Request $request): UserResource
     {
         $user = Auth::user();
+        return new UserResource($user);
+    }
+
+    public function update(UserUpdateRequest $userUpdateRequest): UserResource
+    {
+        $data = $userUpdateRequest->validated();
+
+        $user = Auth::user();
+
+        if (isset($data['name'])) {
+            $user->name = $data['name'];
+        }
+
+        if (isset($data['password'])) {
+            $user->password = Hash::make($data['password']);
+        }
+
+        $user->save();
+
         return new UserResource($user);
     }
 }

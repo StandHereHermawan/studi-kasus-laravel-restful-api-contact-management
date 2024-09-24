@@ -41,7 +41,7 @@ class UserTest extends TestCase
                 ],
             ]);
 
-        self::assertNotNull($response,);
+        self::assertNotNull($response, );
         Log::info(json_encode($response));
         Log::info(json_encode($response->json()));
     }
@@ -49,9 +49,9 @@ class UserTest extends TestCase
     public function testRegisterFailedBlank(): void
     {
         $response = $this->post('/api/users', [
-            "username" =>   '',
-            "password" =>   '',
-            "name" =>       '',
+            "username" => '',
+            "password" => '',
+            "name" => '',
         ])->assertStatus(422)
             ->assertJson([
                 "errors" => [
@@ -67,7 +67,7 @@ class UserTest extends TestCase
                 ],
             ]);
 
-        self::assertNotNull($response,);
+        self::assertNotNull($response, );
         Log::info(json_encode($response));
         Log::info(json_encode($response->json()));
     }
@@ -79,7 +79,7 @@ class UserTest extends TestCase
             "password" => 'Rahasia@2005',
             "name" => 'Hilmi Akbar Muharrom',
         ]);
-        self::assertNotNull($response,);
+        self::assertNotNull($response, );
 
         $response = $this->post('/api/users', [
             "username" => 'noir2005',
@@ -92,7 +92,7 @@ class UserTest extends TestCase
                 ],
             ]);
 
-        self::assertNotNull($response,);
+        self::assertNotNull($response, );
         Log::info(json_encode($response));
         Log::info(json_encode($response->json()));
     }
@@ -110,7 +110,7 @@ class UserTest extends TestCase
                 ],
             ]);
 
-        self::assertNotNull($response,);
+        self::assertNotNull($response, );
         Log::info(json_encode($response));
         Log::info(json_encode($response->json()));
     }
@@ -123,14 +123,14 @@ class UserTest extends TestCase
             "username" => 'SAMPLE-USERNAME-1',
             "password" => 'Rahasia@12',
         ])->assertStatus(200)->assertJson([
-            "data" => [
-                "username" => 'SAMPLE-USERNAME-1',
-                "name" => "SAMPLE-NAME-1",
-            ],
-        ]);
+                    "data" => [
+                        "username" => 'SAMPLE-USERNAME-1',
+                        "name" => "SAMPLE-NAME-1",
+                    ],
+                ]);
 
         $user = User::where('username', 'SAMPLE-USERNAME-1')->first();
-        self::assertNotNull($user->token,);
+        self::assertNotNull($user->token, );
 
         Log::info(json_encode($user));
     }
@@ -141,12 +141,12 @@ class UserTest extends TestCase
             "username" => 'SAMPLE-USERNAME-1',
             "password" => 'Rahasia@12',
         ])->assertStatus(401)->assertJson([
-            "errors" => [
-                "message" => [
-                    "Username or password wrong."
-                ],
-            ],
-        ]);
+                    "errors" => [
+                        "message" => [
+                            "Username or password wrong."
+                        ],
+                    ],
+                ]);
     }
 
     public function testLoginPasswordWrong(): void
@@ -157,12 +157,12 @@ class UserTest extends TestCase
             "username" => 'SAMPLE-USERNAME-1',
             "password" => 'Rahasia@123',
         ])->assertStatus(401)->assertJson([
-            "errors" => [
-                "message" => [
-                    "Username or password wrong."
-                ],
-            ],
-        ]);
+                    "errors" => [
+                        "message" => [
+                            "Username or password wrong."
+                        ],
+                    ],
+                ]);
     }
 
     public function testGetCurrentUserSuccess(): void
@@ -170,7 +170,7 @@ class UserTest extends TestCase
         self::seed([UserSeeder::class,]);
 
         $user = User::where('id', '=', 2)->first();
-        self::assertNotNull($user,);
+        self::assertNotNull($user, );
 
         $this->get('/api/users/current', [
             "Authorization" => $user->token,
@@ -188,7 +188,7 @@ class UserTest extends TestCase
         self::seed([UserSeeder::class,]);
 
         $user = User::where('id', '=', 2)->first();
-        self::assertNotNull($user,);
+        self::assertNotNull($user, );
 
         $this->get('/api/users/current')->assertStatus(401)
             ->assertJson([
@@ -205,7 +205,7 @@ class UserTest extends TestCase
         self::seed([UserSeeder::class,]);
 
         $user = User::where('id', '=', 2)->first();
-        self::assertNotNull($user,);
+        self::assertNotNull($user, );
         $user->token = 'salah';
 
         $this->get('/api/users/current', [
@@ -218,5 +218,126 @@ class UserTest extends TestCase
                     ],
                 ],
             ]);
+    }
+
+    public function testUpdatePasswordSuccess(): void
+    {
+        self::seed([UserSeeder::class,]);
+
+        $oldUser = User::where('id', '=', 2)->first();
+        self::assertNotNull($oldUser, );
+        Log::info(json_encode($oldUser));
+
+        $this->patch('/api/users/current', [
+            "password" => 'passwordBaru@12',
+        ], [
+            "Authorization" => $oldUser->token,
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => [
+                    "name" => $oldUser->name,
+                ],
+            ]);
+
+        $newUser = User::where('id', '=', 2)->first();
+        self::assertNotNull($newUser, );
+        Log::info(json_encode($newUser));
+
+        self::assertNotEquals($oldUser->password, $newUser->password);
+    }
+
+    public function testUpdateNameSuccess(): void
+    {
+        $name = 'Arief Karditya Hermawan';
+
+        self::seed([UserSeeder::class,]);
+
+        $oldUser = User::where('id', '=', 2)->first();
+        self::assertNotNull($oldUser, );
+        Log::info(json_encode($oldUser));
+
+        $this->patch('/api/users/current', [
+            "name" => $name,
+        ], [
+            "Authorization" => $oldUser->token,
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => [
+                    "name" => $name,
+                ],
+            ]);
+
+        $newUser = User::where('id', '=', 2)->first();
+        self::assertNotNull($newUser, );
+        Log::info(json_encode($newUser));
+
+        self::assertNotEquals($oldUser->name, $newUser->name);
+        self::assertEquals($newUser->name, $name);
+    }
+
+    public function testUpdateNameFailed(): void
+    {
+        self::seed([UserSeeder::class,]);
+
+        $oldUser = User::where('id', '=', 2)->first();
+        self::assertNotNull($oldUser, );
+        Log::info(json_encode($oldUser));
+        $name = "{$oldUser->token}-{$oldUser->token}-{$oldUser->token}-{$oldUser->token}-{$oldUser->token}-{$oldUser->token}-";
+
+        $this->patch('/api/users/current', [
+            "name" => $name,
+        ], [
+            "Authorization" => $oldUser->token,
+        ])->assertStatus(422)
+            ->assertJson([
+                "errors" => [
+                    "name" => [
+                        "The name field must not be greater than 100 characters."
+                    ],
+                ],
+            ]);
+    }
+
+    public function testUpdatePasswordFailed(): void
+    {
+        self::seed([UserSeeder::class,]);
+
+        $oldUser = User::where('id', '=', 2)->first();
+        self::assertNotNull($oldUser, );
+        Log::info(json_encode($oldUser));
+        $name = "{$oldUser->token}-{$oldUser->token}-{$oldUser->token}-{$oldUser->token}-{$oldUser->token}-{$oldUser->token}-";
+
+        $this->patch('/api/users/current', [
+            "password" => $name,
+        ], [
+            "Authorization" => $oldUser->token,
+        ])->assertStatus(422)
+            ->assertJson([
+                "errors" => [
+                    "password" => [
+                        "The password field must not be greater than 100 characters."
+                    ],
+                ],
+            ]);
+
+        $name = "bruh";
+
+        $this->patch('/api/users/current', [
+            "password" => $name,
+        ], [
+            "Authorization" => $oldUser->token,
+        ])->assertStatus(422)
+            ->assertJson([
+                "errors" => [
+                    "password" => [
+                        'The password field must be at least 8 characters.',
+                        'The password field must contain at least one uppercase and one lowercase letter.',
+                        'The password field must contain at least one symbol.',
+                        'The password field must contain at least one number.',
+                    ],
+                ],
+            ]);
+            
+     
     }
 }
