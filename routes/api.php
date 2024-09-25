@@ -26,7 +26,11 @@ Route::post('/users', [App\Http\Controllers\Model\UserController::class, 'regist
 Route::post('/users/login', [App\Http\Controllers\Model\UserController::class, 'login']);
 
 Route::middleware(App\Http\Middleware\ApiAuthMiddleware::class)->group(function () {
+    # Users API
     Route::get('/users/current', [\App\Http\Controllers\Model\UserController::class, 'get']);
     Route::patch('/users/current', [\App\Http\Controllers\Model\UserController::class, 'update']);
     Route::delete('/users/logout', [\App\Http\Controllers\Model\UserController::class, 'logout']);
+
+    # Contact API
+    Route::post('/contacts', [App\Http\Controllers\Model\ContactController::class, 'create']);
 });
