@@ -33,4 +33,6 @@ Route::middleware(App\Http\Middleware\ApiAuthMiddleware::class)->group(function 
 
     # Contact API
     Route::post('/contacts', [App\Http\Controllers\Model\ContactController::class, 'create']);
+ // Route::get('/contacts/{id:[0-9]}', [App\Http\Controllers\Model\ContactController::class, 'get']);
+    Route::get('/contacts/{id}', [App\Http\Controllers\Model\ContactController::class, 'get'])->where('id', '[0-9]+');
 });

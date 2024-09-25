@@ -115,4 +115,99 @@ class ContactTest extends TestCase
                 ],
             ]);
     }
+
+    public function testGetContactSuccess(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class,]);
+
+        $user = User::where('id', '=', 2)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $this->get('/api/contacts/' . $contact->id, [
+            "Authorization" => $user->token,
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => [
+                    "first_name" => $contact->first_name,
+                    "last_name" => $contact->last_name,
+                    "email" => $contact->email,
+                    "phone" => $contact->phone,
+                ],
+            ]);
+    }
+
+    public function testGetContactNotFound(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class,]);
+
+        $user = User::where('id', '=', 2)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $this->get('/api/contacts/' . $contact->id + 20, [
+            "Authorization" => $user->token,
+        ])->assertStatus(404)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "Contact not found."
+                    ],
+                ],
+            ]);
+    }
+
+    public function testGetContactFromOtherUser(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class,]);
+
+        $user1 = User::where('id', '=', 2)->first();
+        self::assertNotNull($user1, );
+        self::assertNotNull($user1->token, );
+        Log::info(json_encode($user1));
+
+        $user2 = User::where('id', '=', 3)->first();
+        self::assertNotNull($user2, );
+        self::assertNotNull($user2->token, );
+        Log::info(json_encode($user2));
+
+        $contact = Contact::where('user_id', '=', $user1->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $this->get('/api/contacts/' . $contact->id, [
+            "Authorization" => $user2->token,
+        ])->assertStatus(404)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "Contact not found."
+                    ],
+                ],
+            ]);
+    }
+
+    public function testGetContactURINotFound(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class,]);
+
+        $user = User::where('id', '=', 2)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $this->get('/api/contacts/abcd', [
+            "Authorization" => $user->token,
+        ])->withException(new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException());
+    }
 }
