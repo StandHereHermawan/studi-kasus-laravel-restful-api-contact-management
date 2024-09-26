@@ -308,4 +308,53 @@ class ContactTest extends TestCase
                 ],
             ]);
     }
+
+    public function testDeleteSuccess(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->limit(1)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $this->delete(uri: '/api/contacts/' . $contact->id, data: [], headers: [
+            "Authorization" => $user->token,
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => true,
+            ]);
+
+        $contact2 = Contact::where('id', '=', $contact->id)->limit(1)->first();
+        self::assertNull($contact2, );
+    }
+
+    public function testDeleteIdNotFound(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->limit(1)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $this->delete(uri: '/api/contacts/' . $contact->id + 7, data: [], headers: [
+            "Authorization" => $user->token,
+        ])->assertStatus(404)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "Contact not found."
+                    ],
+                ],
+            ]);
+    }
 }
