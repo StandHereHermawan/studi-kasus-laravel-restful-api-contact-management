@@ -4,11 +4,14 @@ namespace Tests\Feature\Model;
 
 use App\Models\Contact;
 use App\Models\User;
+
 use Database\Seeders\ContactSeeder;
 use Database\Seeders\UserSeeder;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Log;
+
 use Tests\TestCase;
 
 class ContactTest extends TestCase
@@ -209,5 +212,100 @@ class ContactTest extends TestCase
         $this->get('/api/contacts/abcd', [
             "Authorization" => $user->token,
         ])->withException(new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException());
+    }
+
+    public function testUpdateContactSuccess(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $this->put('/api/contacts/' . $contact->id, [
+            "first_name" => "Hilmi",
+            "last_name" => "Akbar Muharrom",
+            "email" => "noir2004@proton.com",
+            "phone" => "+62-851-7500-3822",
+        ], [
+            "Authorization" => $user->token,
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => [
+                    "first_name" => "Hilmi",
+                    "last_name" => "Akbar Muharrom",
+                    "email" => "noir2004@proton.com",
+                    "phone" => "+62-851-7500-3822",
+                ],
+            ]);
+
+        $contact = Contact::where('user_id', '=', $user->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+    }
+
+    public function testUpdateContactValidationError(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $this->put('/api/contacts/' . $contact->id, [
+            "first_name" => "",
+            "last_name" => "Akbar Muharrom",
+            "email" => "noir2004@proton.com",
+            "phone" => "+62-851-7500-3822",
+        ], [
+            "Authorization" => $user->token,
+        ])->assertStatus(422)
+            ->assertJson([
+                "errors" => [
+                    "first_name" => [
+                        "The first name field is required."
+                    ],
+                ],
+            ]);
+    }
+
+    public function testUpdateContactNotAuthorized(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $this->put('/api/contacts/' . $contact->id, [
+            "first_name" => "Hilmi",
+            "last_name" => "Akbar Muharrom",
+            "email" => "noir2004@proton.com",
+            "phone" => "+62-851-7500-3822",
+        ], [
+            "Authorization" => 'salah',
+        ])->assertStatus(401)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "Unauthorized."
+                    ],
+                ],
+            ]);
     }
 }

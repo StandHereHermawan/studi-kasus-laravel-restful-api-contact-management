@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware(middleware: 'auth:sanctum')->get(uri: '/user', action: function (Request $request): mixed {
-//     return $request->user();
-// });
+# Route::middleware(middleware: 'auth:sanctum')->get(uri: '/user', action: function (Request $request): mixed {
+#     return $request->user();
+# });
 
 # Hanya '/users' karena di RouteServiceProvider sudah diberi prefix 'api', membuat uri menjadi '/api/users' di unit test.
 # All uri here to be accessed needs prefix '/api'.
@@ -35,4 +35,5 @@ Route::middleware(App\Http\Middleware\ApiAuthMiddleware::class)->group(function 
     Route::post('/contacts', [App\Http\Controllers\Model\ContactController::class, 'create']);
  // Route::get('/contacts/{id:[0-9]}', [App\Http\Controllers\Model\ContactController::class, 'get']);
     Route::get('/contacts/{id}', [App\Http\Controllers\Model\ContactController::class, 'get'])->where('id', '[0-9]+');
+    Route::put('/contacts/{id}', [App\Http\Controllers\Model\ContactController::class, 'update'])->where('id', '[0-9]+');
 });
