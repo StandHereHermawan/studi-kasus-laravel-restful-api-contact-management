@@ -5,6 +5,7 @@ namespace Tests\Feature\Model;
 use App\Models\Contact;
 use App\Models\User;
 
+use Database\Seeders\ContactCollectionSearchSeeder;
 use Database\Seeders\ContactSeeder;
 use Database\Seeders\UserSeeder;
 
@@ -356,5 +357,132 @@ class ContactTest extends TestCase
                     ],
                 ],
             ]);
+    }
+
+    public function testSearchContactByFirstName(): void
+    {
+        self::seed([UserSeeder::class, ContactCollectionSearchSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $response = $this->get('/api/contacts?name=FIRST', [
+            "Authorization" => $user->token,
+        ])
+            ->assertStatus(200)
+            ->json();
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        self::assertEquals(10, count($response['data']));
+        self::assertEquals(12, $response['meta']['total']);
+    }
+
+    public function testSearchContactByLastName(): void
+    {
+        self::seed([UserSeeder::class, ContactCollectionSearchSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $response = $this->get('/api/contacts?name=LAST', [
+            "Authorization" => $user->token,
+        ])
+            ->assertStatus(200)
+            ->json();
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        self::assertEquals(10, count($response['data']));
+        self::assertEquals(12, $response['meta']['total']);
+    }
+
+    public function testSearchContactByEmail(): void
+    {
+        self::seed([UserSeeder::class, ContactCollectionSearchSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $response = $this->get('/api/contacts?email=sample', [
+            "Authorization" => $user->token,
+        ])
+            ->assertStatus(200)
+            ->json();
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        self::assertEquals(10, count($response['data']));
+        self::assertEquals(12, $response['meta']['total']);
+    }
+
+    public function testSearchContactByPhone(): void
+    {
+        self::seed([UserSeeder::class, ContactCollectionSearchSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $response = $this->get('/api/contacts?phone=+62', [
+            "Authorization" => $user->token,
+        ])
+            ->assertStatus(200)
+            ->json();
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        self::assertEquals(10, count($response['data']));
+        self::assertEquals(12, $response['meta']['total']);
+    }
+
+    public function testSearchContactNotFound(): void
+    {
+        self::seed([UserSeeder::class, ContactCollectionSearchSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $response = $this->get('/api/contacts?phone=tidakada', [
+            "Authorization" => $user->token,
+        ])
+            ->assertStatus(200)
+            ->json();
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        self::assertEquals(0, count($response['data']));
+        self::assertEquals(0, $response['meta']['total']);
+    }
+
+    public function testSearchContactWithPage(): void
+    {
+        self::seed([UserSeeder::class, ContactCollectionSearchSeeder::class,]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $response = $this->get('/api/contacts?size=4&page=2', [
+            "Authorization" => $user->token,
+        ])
+            ->assertStatus(200)
+            ->json();
+
+        Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
+        self::assertEquals(4, count($response['data']));
+        self::assertEquals(12, $response['meta']['total']);
+        self::assertEquals(2, $response['meta']['current_page']);
     }
 }
