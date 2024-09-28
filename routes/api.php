@@ -52,4 +52,7 @@ Route::middleware(App\Http\Middleware\ApiAuthMiddleware::class)->group(function 
     Route::get('/contacts/{id}', [App\Http\Controllers\Model\ContactController::class, 'get'])->where('id', '[0-9]+');
     Route::put('/contacts/{id}', [App\Http\Controllers\Model\ContactController::class, 'update'])->where('id', '[0-9]+');
     Route::delete('/contacts/{id}', [App\Http\Controllers\Model\ContactController::class, 'delete'])->where('id', '[0-9]+');
+
+    # Address API
+    Route::post('/contacts/{idContact}/addresses', [App\Http\Controllers\Model\AddressController::class, 'create'])->where('idContact', '[0-9]+');
 });
