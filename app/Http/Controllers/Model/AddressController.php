@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 class AddressController extends Controller
 {
 
+    # Local function that would be used in Controller function.
     private function getContact(\App\Models\User $user, int $idContact): Contact
     {
         $contact = Contact::where('user_id', '=', $user->id)->where('id', '=', $idContact)->first();
@@ -50,6 +51,7 @@ class AddressController extends Controller
         return $address;
     }
 
+    # Controller function that would be used in routing.
     public function create(int $idContact, AddressCreateRequest $addressCreateRequest): JsonResponse
     {
         $user = Auth::user();
@@ -83,5 +85,17 @@ class AddressController extends Controller
         $address->save();
 
         return new AddressResource($address);
+    }
+
+    public function delete(int $idContact, int $idAddress): JsonResponse
+    {
+        $user = Auth::user();
+        $contact = $this->getContact($user, $idContact);
+        $address = $this->getAddress($contact, $idAddress);
+        $address->delete();
+
+        return response()->json([
+            "data" => true,
+        ])->setStatusCode(200);
     }
 }

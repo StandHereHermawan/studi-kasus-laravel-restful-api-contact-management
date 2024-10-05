@@ -249,21 +249,21 @@ class AddressTest extends TestCase
         Log::info(json_encode($address));
 
         $this->put("/api/contacts/{$address->contact_id}/addresses/{$address->id}", [
-            "street"        => "SAMPLE-STREET-UPDATE",
-            "city"          => "SAMPLE-CITY-UPDATE",
-            "province"      => "SAMPLE-PROVINCE-UPDATE",
-            "country"       => "SAMPLE-COUNTRY-UPDATE",
-            "postal_code"   => "40394",
+            "street" => "SAMPLE-STREET-UPDATE",
+            "city" => "SAMPLE-CITY-UPDATE",
+            "province" => "SAMPLE-PROVINCE-UPDATE",
+            "country" => "SAMPLE-COUNTRY-UPDATE",
+            "postal_code" => "40394",
         ], [
             "Authorization" => $user->token,
         ])->assertStatus(200)
             ->assertJson([
                 "data" => [
-                    "street"        => "SAMPLE-STREET-UPDATE",
-                    "city"          => "SAMPLE-CITY-UPDATE",
-                    "province"      => "SAMPLE-PROVINCE-UPDATE",
-                    "country"       => "SAMPLE-COUNTRY-UPDATE",
-                    "postal_code"   => "40394",
+                    "street" => "SAMPLE-STREET-UPDATE",
+                    "city" => "SAMPLE-CITY-UPDATE",
+                    "province" => "SAMPLE-PROVINCE-UPDATE",
+                    "country" => "SAMPLE-COUNTRY-UPDATE",
+                    "postal_code" => "40394",
                 ],
             ]);
 
@@ -290,11 +290,11 @@ class AddressTest extends TestCase
         Log::info(json_encode($address));
 
         $this->put("/api/contacts/{$address->contact_id}/addresses/{$address->id}", [
-            "street"        => "SAMPLE-STREET-UPDATE",
-            "city"          => "SAMPLE-CITY-UPDATE",
-            "province"      => "SAMPLE-PROVINCE-UPDATE",
-            "country"       => "",
-            "postal_code"   => "40394",
+            "street" => "SAMPLE-STREET-UPDATE",
+            "city" => "SAMPLE-CITY-UPDATE",
+            "province" => "SAMPLE-PROVINCE-UPDATE",
+            "country" => "",
+            "postal_code" => "40394",
         ], [
             "Authorization" => $user->token,
         ])->assertStatus(422)
@@ -331,11 +331,11 @@ class AddressTest extends TestCase
         $address->id += 20;
 
         $this->put("/api/contacts/{$address->contact_id}/addresses/{$address->id}", [
-            "street"        => "SAMPLE-STREET-UPDATE",
-            "city"          => "SAMPLE-CITY-UPDATE",
-            "province"      => "SAMPLE-PROVINCE-UPDATE",
-            "country"       => "SAMPLE-COUNTRY-UPDATE",
-            "postal_code"   => "40394",
+            "street" => "SAMPLE-STREET-UPDATE",
+            "city" => "SAMPLE-CITY-UPDATE",
+            "province" => "SAMPLE-PROVINCE-UPDATE",
+            "country" => "SAMPLE-COUNTRY-UPDATE",
+            "postal_code" => "40394",
         ], [
             "Authorization" => $user->token,
         ])->assertStatus(404)
@@ -350,5 +350,64 @@ class AddressTest extends TestCase
         $address = Address::where('contact_id', '=', $contact->id)->first();
         self::assertNotNull($address, );
         Log::info(json_encode($address));
+    }
+
+    public function testDeleteAddressSuccess(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $address = Address::where('contact_id', '=', $contact->id)->first();
+        self::assertNotNull($address, );
+        Log::info(json_encode($address));
+
+        $this->delete("/api/contacts/{$address->contact_id}/addresses/{$address->id}", [], [
+            "Authorization" => $user->token,
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => true,
+            ]);
+
+        $address = Address::where('contact_id', '=', $contact->id)->first();
+        self::assertNull($address, );
+    }
+
+    public function testDeleteAddressNotFound(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $address = Address::where('contact_id', '=', $contact->id)->first();
+        self::assertNotNull($address, );
+        Log::info(json_encode($address));
+
+        $address->id += 20;
+
+        $this->delete("/api/contacts/{$address->contact_id}/addresses/{$address->id}", [], [
+            "Authorization" => $user->token,
+        ])->assertStatus(404)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        'Address not found.'
+                    ],
+                ],
+            ]);
     }
 }
