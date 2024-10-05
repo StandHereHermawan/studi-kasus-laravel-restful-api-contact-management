@@ -7,16 +7,35 @@ use App\Http\Requests\Contact\ContactCreateRequest;
 use App\Http\Requests\Contact\ContactUpdateRequest;
 use App\Http\Resources\Model\Collection\ContactResourceCollection;
 use App\Http\Resources\Model\ContactResource;
+
 use App\Models\Contact;
+use App\Models\User;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
+
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
 {
+
+    private function getContact(User $user, int $idContact): Contact
+    {
+        $contact = Contact::where('user_id', '=', $user->id)->where('id', '=', $idContact)->first();
+        if (!$contact) {
+            throw new \Illuminate\Http\Exceptions\HttpResponseException(response()->json([
+                "errors" => [
+                    "message" => [
+                        "Contact not found."
+                    ],
+                ],
+            ])->setStatusCode(404));
+        }
+        return $contact;
+    }
 
     public function create(ContactCreateRequest $contactCreateRequest): JsonResponse
     {
@@ -33,17 +52,7 @@ class ContactController extends Controller
     public function get(int $id): ContactResource
     {
         $user = Auth::user();
-        $contact = Contact::where('id', '=', $id)->where('user_id', '=', $user->id)->first();
-
-        if (!$contact) {
-            throw new HttpResponseException(response()->json([
-                "errors" => [
-                    "message" => [
-                        "Contact not found."
-                    ],
-                ],
-            ])->setStatusCode(404));
-        }
+        $contact = $this->getContact($user, $id);
 
         return new ContactResource($contact);
     }
@@ -52,19 +61,7 @@ class ContactController extends Controller
     {
         $user = Auth::user();
 
-        $contact = Contact::where('id', '=', $id)->where('user_id', '=', $user->id)->first();
-
-        if (!$contact) {
-            throw new HttpResponseException(response()->json(
-                [
-                    "errors" => [
-                        "message" => [
-                            "Contact Not Found."
-                        ],
-                    ],
-                ]
-            )->setStatusCode(404));
-        }
+        $contact = $this->getContact($user, $id);
 
         $data = $contactUpdateRequest->validated();
         $contact->fill($data);
@@ -77,24 +74,13 @@ class ContactController extends Controller
     {
         $user = Auth::user();
 
-        $contact = Contact::where('id', '=', $id)->where('user_id', '=', $user->id)->first();
-
-        if (!$contact) {
-            throw new HttpResponseException(response()->json([
-                "errors" => [
-                    "message" => [
-                        "Contact not found."
-                    ],
-                ],
-            ])->setStatusCode(404));
-        }
+        $contact = $this->getContact($user, $id);
 
         $contact->delete();
         return response()->json([
             "data" => true,
         ])->setStatusCode(200);
     }
-
 
     public function search(Request $request): ContactResourceCollection
     {
