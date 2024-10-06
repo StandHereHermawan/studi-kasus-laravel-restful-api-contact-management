@@ -376,7 +376,7 @@ class AddressTest extends TestCase
                 "data" => true,
             ]);
 
-        $address = Address::where('contact_id', '=', $contact->id)->first();
+        $address = Address::where('id', '=', $address->id)->first();
         self::assertNull($address, );
     }
 
@@ -406,6 +406,70 @@ class AddressTest extends TestCase
                 "errors" => [
                     "message" => [
                         'Address not found.'
+                    ],
+                ],
+            ]);
+    }
+
+    public function testGetListAddressSuccess(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+
+        $user = User::where('id', '=', 2)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $address = Address::where('contact_id', '=', $contact->id)->first();
+        self::assertNotNull($address, );
+        Log::info(json_encode($address));
+
+        $this->get("/api/contacts/{$address->contact_id}/addresses", [
+            "Authorization" => $user->token,
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => [
+
+                ],
+            ]);
+
+        $addresses = Address::where('contact_id', '=', $contact->id);
+        self::assertNotNull($address, );
+        $addresses->each(function ($address) {
+            Log::info(json_encode($address, JSON_PRETTY_PRINT));
+        });
+    }
+
+    public function testGetListAddressNotFound(): void
+    {
+        self::seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+
+        $user = User::where('id', '=', 3)->first();
+        self::assertNotNull($user, );
+        self::assertNotNull($user->token, );
+        Log::info(json_encode($user));
+
+        $contact = Contact::where('user_id', '=', $user->id)->first();
+        self::assertNotNull($contact, );
+        Log::info(json_encode($contact));
+
+        $address = Address::where('contact_id', '=', $contact->id)->first();
+        self::assertNotNull($address, );
+        Log::info(json_encode($address));
+
+        $address->contact_id += 20;
+
+        $this->get("/api/contacts/{$address->contact_id}/addresses", [
+            "Authorization" => $user->token,
+        ])->assertStatus(404)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        'Contact not found.'
                     ],
                 ],
             ]);

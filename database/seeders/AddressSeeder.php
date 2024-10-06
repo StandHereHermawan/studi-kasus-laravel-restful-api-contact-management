@@ -16,17 +16,17 @@ class AddressSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($this->i; $this->i < 20; $this->i++) {
+        for ($this->i; $this->i < 40; $this->i++) {
             $index = $this->i + 1;
 
-            if ($this->i < 10) {
-                Address::factory()->street($index)->city($index)->province($index)->country($index)->postalCode()->contactId($index)->isActive()->newRecord()->create()->save();
-            } elseif ($this->i < 13) {
-                Address::factory()->street($index)->city($index)->province($index)->country($index)->postalCode()->contactId($index)->isNotActive()->newRecord()->create()->save();
-            } elseif ($this->i < 16) {
-                Address::factory()->street($index)->city($index)->province($index)->country($index)->postalCode()->contactId($index)->isActive()->newRecord()->softDeleted()->create()->save();
+            if ($this->i < 30) {
+                Address::factory()->street($index)->city($index)->province($index)->country($index)->postalCode()->contactId($this->userId)->isActive()->newRecord()->create()->save();
+            } elseif ($this->i < 33) {
+                Address::factory()->street($index)->city($index)->province($index)->country($index)->postalCode()->contactId($this->userId)->isNotActive()->newRecord()->create()->save();
+            } elseif ($this->i < 36) {
+                Address::factory()->street($index)->city($index)->province($index)->country($index)->postalCode()->contactId($this->userId)->isActive()->newRecord()->softDeleted()->create()->save();
             } else {
-                Address::factory()->street($index)->city($index)->province($index)->country($index)->postalCode()->contactId($index)->isNotActive()->newRecord()->softDeleted()->create()->save();
+                Address::factory()->street($index)->city($index)->province($index)->country($index)->postalCode()->contactId($this->userId)->isNotActive()->newRecord()->softDeleted()->create()->save();
             }
 
             if ($index % 3 == 0) {
