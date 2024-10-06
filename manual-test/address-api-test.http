@@ -1,0 +1,78 @@
+### Login User API
+POST http://localhost:8000/api/users/login
+Content-Type:   application/json
+Accept:         application/json
+
+{
+    "username": "arief@2003",
+    "password": "Rahasia@2003"
+}
+
+
+
+### Get Current User API
+GET http://localhost:8000/api/users/current
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+
+
+### Create Address API with Contact id #2
+POST http://localhost:8000/api/contacts/2/addresses
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+{
+    "street": "sample-street",
+    "city": "sample-city",
+    "country": "sample-country",
+    "province": "sample-province",
+    "postal_code": "40224"
+}
+
+
+
+### Get Address API with Contact id #2 and Address id #2
+GET http://localhost:8000/api/contacts/2/addresses/2
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+
+
+### Update Address API with Contact id #2 and Address id #2
+PUT  http://localhost:8000/api/contacts/2/addresses/2
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+{
+    "street":       "sample-2-street",
+    "city":         "sample-2-city",
+    "province":     "sample-2-province",
+    "country":      "sample-2-country",
+    "postal_code":  "40224"
+}
+
+
+
+### Update Address API with Contact id #2 and Address id #2
+PUT  http://localhost:8000/api/contacts/2/addresses/2
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+
+
+### Delete Address API with Contact id #2 and Address id #4
+Delete http://localhost:8000/api/contacts/2/addresses/4
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+
+
+### List Address API with Contact id #2
+GET http://localhost:8000/api/contacts/2/addresses
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118

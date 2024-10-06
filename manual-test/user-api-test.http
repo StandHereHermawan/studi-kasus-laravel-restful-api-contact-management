@@ -1,0 +1,50 @@
+### Register User API
+POST http://localhost:8000/api/users
+Content-Type:   application/json
+Accept:         application/json
+
+{
+    "username": "arief@2003",
+    "password": "Rahasia@2003",
+    "name": "Arief Karditya Hermawan"
+}
+
+
+
+### Login User API
+POST http://localhost:8000/api/users/login
+Content-Type:   application/json
+Accept:         application/json
+
+{
+    "username": "arief@2003",
+    "password": "Rahasia@2003"
+}
+
+
+
+### Get Current User API
+GET http://localhost:8000/api/users/current
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  
+
+
+
+### Update Current User API
+PATCH http://localhost:8000/api/users/current
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  
+
+{
+    "name": "Arief Karditya Hermawan"
+}
+
+
+
+### Logout Current User API
+DELETE http://localhost:8000/api/users/logout
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  

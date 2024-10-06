@@ -1,0 +1,102 @@
+### Login User API
+POST http://localhost:8000/api/users/login
+Content-Type:   application/json
+Accept:         application/json
+
+{
+    "username": "arief@2003",
+    "password": "Rahasia@2003"
+}
+
+
+
+### Get Current User API
+GET http://localhost:8000/api/users/current
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+
+
+### Create Contact API
+POST http://localhost:8000/api/contacts
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+{
+    "first_name": "Bagus",
+    "last_name": "Arya",
+    "phone": "+62-851-0075-3822",
+    "email": "bagusarya@proton.com"
+}
+
+# {
+#     "first_name": "Hilmi Akbar",
+#     "last_name": "Muharrom",
+#     "phone": "+62-851-0075-3822",
+#     "email": "imiia@proton.com"
+# }
+
+### Get Contact API #1
+GET http://localhost:8000/api/contacts/1
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+
+
+### Update Contact API #5
+PUT http://localhost:8000/api/contacts/5
+Content-Type:   application/json
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+{
+    "first_name": "Aryo",
+    "last_name": "Kusumo",
+    "phone": "+62-851-0075-3822",
+    "email": "aryokusumo@proton.com"
+}
+
+# {
+#     "first_name": "Hilmi",
+#     "last_name": "Akbar Muharrom",
+#     "phone": "+62-851-0075-3822",
+#     "email": "imiia@proton.com"
+# }
+
+
+
+### DELETE Contact API #1
+DELETE http://localhost:8000/api/contacts/1
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+
+
+### SEARCH Contact API
+GET http://localhost:8000/api/contacts
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+
+
+### SEARCH Contact API with pagination 
+GET http://localhost:8000/api/contacts?size=2&page=1
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+
+
+### SEARCH Contact API with query parameter
+GET http://localhost:8000/api/contacts?name=Fatan
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
+
+
+
+### SEARCH Contact API with multiple query parameter
+GET http://localhost:8000/api/contacts?email=proton&size=1&page=2
+Accept:         application/json
+Authorization:  01925f5b-5d52-70d4-8489-de1c48c00118
